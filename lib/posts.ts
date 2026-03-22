@@ -1,5 +1,4 @@
-import fs from 'fs'
-import path from 'path'
+import { Redis } from '@upstash/redis'
 
 export interface Post {
   id: string
@@ -14,31 +13,30 @@ export interface Post {
   createdAt: string
 }
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'posts.json')
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+})
 
-export function getAllPosts(): Post[] {
+const KEY = 'posts'
+
+export async function getAllPosts(): Promise<Post[]> {
   try {
-    if (!fs.existsSync(DATA_FILE)) return []
-    const raw = fs.readFileSync(DATA_FILE, 'utf-8')
-    if (!raw.trim()) return []
-    const posts: Post[] = JSON.parse(raw)
+    const posts = await redis.get<Post[]>(KEY)
+    if (!posts) return []
     return posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   } catch {
     return []
   }
 }
 
-export function getPostById(id: string): Post | null {
-  const posts = getAllPosts()
+export async function getPostById(id: string): Promise<Post | null> {
+  const posts = await getAllPosts()
   return posts.find(p => p.id === id) ?? null
 }
 
-export function savePost(post: Post): void {
-  try {
-    const posts = getAllPosts()
-    const updated = [post, ...posts].slice(0, 72)
-    fs.writeFileSync(DATA_FILE, JSON.stringify(updated, null, 2))
-  } catch {
-    console.error('Failed to save post')
-  }
+export async function savePost(post: Post): Promise<void> {
+  const posts = await getAllPosts()
+  const updated = [post, ...posts].slice(0, 72)
+  await redis.set(KEY, updated)
 }
