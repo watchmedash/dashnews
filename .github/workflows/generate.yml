@@ -1,0 +1,15 @@
+name: Generate Story
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call generate endpoint
+        run: |
+          curl -s -X GET "https://dashnews.top/api/generate" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
