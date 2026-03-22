@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import PostCard from '@/components/PostCard'
+export const dynamicParams = true
 
 export const dynamic = 'force-dynamic'
 
