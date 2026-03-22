@@ -39,15 +39,46 @@ export default function HomeClient({ initialPosts }: { initialPosts: Post[] }) {
 
       <div className="container">
 
-        {posts.length === 0 ? (
-          <div className="empty-state">
-            <div className="icon">📰</div>
-            <p>No stories yet.</p>
-            <p style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
-              Visit <code style={{ color: 'var(--accent)' }}>/api/generate</code> to generate the first story!
-            </p>
-          </div>
-        ) : (
+      {posts.length === 0 ? (
+<div className="empty-state">
+  <div className="icon">📰</div>
+  <p>No stories yet.</p>
+  <button
+    onClick={async () => {
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: 'Generate breaking news story',
+            model: 'llama-3.1-8b-instant'
+          })
+        })
+        if (res.ok) {
+          window.location.reload()
+        } else {
+          alert('Failed to generate story')
+        }
+      } catch {
+        alert('Generate failed')
+      }
+    }}
+    className="generate-btn"
+    style={{
+      background: 'var(--accent)',
+      color: 'white',
+      border: 'none',
+      padding: '1rem 2rem',
+      borderRadius: '8px',
+      fontSize: '1rem',
+      cursor: 'pointer',
+      marginTop: '1rem'
+    }}
+  >
+First Story!
+  </button>
+</div>
+) : (
           <>
             {featured && (
               <>
