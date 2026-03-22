@@ -35,9 +35,10 @@ export default async function PostPage({ params }: { params: { id: string } }) {
   const post = await getPostById(params.id)
   if (!post) notFound()
 
-  const related = await getAllPosts()
-    .filter(p => p.tag === post.tag && p.id !== post.id)
-    .slice(0, 3)
+  const allPosts = await getAllPosts()
+const related = allPosts
+  .filter(p => p.tag === post.tag && p.id !== post.id)
+  .slice(0, 3)
 
   const date = new Date(post.createdAt).toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric'
