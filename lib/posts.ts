@@ -18,7 +18,9 @@ const DATA_FILE = path.join(process.cwd(), 'data', 'posts.json')
 
 export function getAllPosts(): Post[] {
   try {
+    if (!fs.existsSync(DATA_FILE)) return []
     const raw = fs.readFileSync(DATA_FILE, 'utf-8')
+    if (!raw.trim()) return []
     const posts: Post[] = JSON.parse(raw)
     return posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
   } catch {
@@ -32,8 +34,11 @@ export function getPostById(id: string): Post | null {
 }
 
 export function savePost(post: Post): void {
-  const posts = getAllPosts()
-  // Keep max 72 posts (3 days at 1/hour)
-  const updated = [post, ...posts].slice(0, 72)
-  fs.writeFileSync(DATA_FILE, JSON.stringify(updated, null, 2))
+  try {
+    const posts = getAllPosts()
+    const updated = [post, ...posts].slice(0, 72)
+    fs.writeFileSync(DATA_FILE, JSON.stringify(updated, null, 2))
+  } catch {
+    console.error('Failed to save post')
+  }
 }
