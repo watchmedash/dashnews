@@ -7,11 +7,10 @@ import PostCard from '@/components/PostCard'
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const post = getPostById(params.id)
-  if (!post) return {}
-
-  return {
-    title: `${post.title} — DashNews`,
+  const post = await getPostById(params.id)
+if (!post) return notFound()
+return {
+  title: `${post.title} — DashNews`,
     description: post.excerpt,
     openGraph: {
       title: post.title,
@@ -35,7 +34,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const post = getPostById(params.id)
   if (!post) notFound()
 
-  const related = getAllPosts()
+  const related = await getAllPosts()
     .filter(p => p.tag === post.tag && p.id !== post.id)
     .slice(0, 3)
 
