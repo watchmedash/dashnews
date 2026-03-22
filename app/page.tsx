@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const posts = getAllPosts()
+  const posts = await getAllPosts()
   const latest = posts[0]
   const image = latest?.imageUrl ?? 'https://dashnews.top/og-default.jpg'
   const title = latest ? `${latest.title} — DashNews` : 'DashNews — Breaking News & Stories'
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function Home() {
-  const posts = getAllPosts()
+export default async function Home() {
+  const posts = await getAllPosts()
   return <HomeClient initialPosts={posts} />
 }
