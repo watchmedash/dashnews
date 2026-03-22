@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default **async** function PostPage({ params }: { params: { id: string } }) {
-  const post = **await** getPostById(params.id)
+export default async function PostPage({ params }: { params: { id: string } }) {
+  const post = await getPostById(params.id)
   if (!post) notFound()
 
   const related = await getAllPosts()
