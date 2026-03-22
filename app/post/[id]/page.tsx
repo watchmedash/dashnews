@@ -4,13 +4,14 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import PostCard from '@/components/PostCard'
+
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const post = await getPostById(params.id)
-if (!post) return notFound()
-return {
-  title: `${post.title} — DashNews`,
+  if (!post) return notFound()
+  return {
+    title: `${post.title} — DashNews`,
     description: post.excerpt,
     openGraph: {
       title: post.title,
@@ -30,8 +31,8 @@ return {
   }
 }
 
-export default function PostPage({ params }: { params: { id: string } }) {
-  const post = getPostById(params.id)
+export default **async** function PostPage({ params }: { params: { id: string } }) {
+  const post = **await** getPostById(params.id)
   if (!post) notFound()
 
   const related = await getAllPosts()
