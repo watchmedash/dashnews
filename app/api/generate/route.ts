@@ -3,11 +3,6 @@ import OpenAI from 'openai'
 import { savePost, Post } from '@/lib/posts'
 import { randomUUID } from 'crypto'
 
-const openai = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY,
-  baseURL: 'https://api.groq.com/openai/v1',
-})
-
 const TAGS = ['World', 'Technology', 'Science', 'Politics', 'Health', 'Business', 'Entertainment', 'Sports']
 
 function toSlug(title: string): string {
@@ -29,6 +24,10 @@ async function getUnsplashImage(query: string): Promise<{ url: string; alt: stri
 }
 
 export async function GET(request: Request) {
+  const openai = new OpenAI({
+    apiKey: process.env.GROQ_API_KEY,
+    baseURL: 'https://api.groq.com/openai/v1',
+  })
   const cronSecret = process.env.CRON_SECRET
   if (cronSecret) {
     const authHeader = request.headers.get('authorization')
@@ -44,7 +43,7 @@ export async function GET(request: Request) {
     messages: [
       {
         role: 'system',
-        content: `You are a fake news writer. Write stories that sound completely realistic and believable — like real breaking news from a real outlet like BBC or Reuters. 
+        content: `You are a fake news writer. Write stories that sound completely realistic and believable — like real breaking news from a real outlet like BBC or Reuters.
 The stories should be fictional but plausible: realistic people, realistic events, realistic locations, realistic quotes from named experts or officials.
 No jokes, no absurdity, no animals doing human things. Just convincing fake news that could fool someone skimming a headline.
 Respond ONLY with valid JSON — no markdown, no code blocks, no extra text.`
